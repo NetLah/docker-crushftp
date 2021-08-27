@@ -15,10 +15,10 @@ ENV ORIGIN_SOURCE_ZIP=$SOURCE_ZIP
 # source CrushFTP10.zip without java included
 ARG SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
 ARG CRUSHFTP_VERSION=10.0.0_44
-ADD $SOURCE_ZIP /tmp/CrushFTP10.zip
 # unzip to destination /tmp/CrushFTP10
 WORKDIR /tmp
-RUN apk --no-cache add zip \
+RUN wget $SOURCE_ZIP \
+  && apk --no-cache add zip \
   && unzip -oq /tmp/CrushFTP10.zip
 WORKDIR /src/tmp
 RUN cd /tmp/CrushFTP10 \
