@@ -1,5 +1,5 @@
 # alpine:3.13
-# buildargs: REPO=alpine:3.13 CRUSHFTP_VERSION=10.0.0_44 SOURCE_METHOD=wget or add SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
+# buildargs: REPO=alpine:3.13 CRUSHFTP_VERSION=10.0.0_45 SOURCE_METHOD=wget or add SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
 ARG REPO=alpine:3.13
 ARG SOURCE_METHOD=wget
 
@@ -33,11 +33,11 @@ FROM base as final
 WORKDIR /src
 COPY --from=zip /src .
 
-ARG CRUSHFTP_VERSION=10.0.0_44
+ARG CRUSHFTP_VERSION=10.0.0_45
 ENV CRUSHFTP_VERSION=$CRUSHFTP_VERSION
-LABEL org.opencontainers.image.authors="https://github.com/NetLah"
-LABEL org.opencontainers.image.url="https://hub.docker.com/r/netlah/crushftp-source"
-LABEL org.opencontainers.image.source="https://github.com/NetLah/docker-crushftp"
-LABEL org.opencontainers.image.description="Intermediate docker image for crushftp.zip."
-LABEL org.opencontainers.image.version="$CRUSHFTP_VERSION"
-LABEL version="$CRUSHFTP_VERSION"
+LABEL org.opencontainers.image.authors="https://github.com/NetLah"\
+  org.opencontainers.image.url="https://hub.docker.com/r/netlah/crushftp-source"\
+  org.opencontainers.image.source="https://github.com/NetLah/docker-crushftp"\
+  org.opencontainers.image.description="Intermediate docker image for crushftp.zip."\
+  org.opencontainers.image.version="$CRUSHFTP_VERSION"\
+  version="$CRUSHFTP_VERSION"

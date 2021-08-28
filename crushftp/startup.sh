@@ -89,12 +89,17 @@ term_handler() {
     log "Stopping..."
     get_pid
     #echo "CRUSH_PID:  $CRUSH_PID"
+    if [[ -z "$CRUSH_PID" ]]; then    
+        log Cannot find PID
+        exit 1
+    fi
+
     log_n "Shutting down CrushFTP... "
     kill $CRUSH_PID
     ret_val=$?
     if [ ${ret_val} -ne 0 ]; then
         echo FAIL
-        log could not kill PID
+        log "Could not kill PID"
         exit 1
     fi 
     
