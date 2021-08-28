@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo "Current Dir: $(pwd)"
+echo "SOURCE_BRANCH: ${SOURCE_BRANCH}"
+echo "SOURCE_COMMIT: ${SOURCE_COMMIT}"
+echo "COMMIT_MSG: ${COMMIT_MSG}"
+echo "DOCKER_REPO: ${DOCKER_REPO}"
+echo "DOCKERFILE_PATH: ${DOCKERFILE_PATH}"
+echo "DOCKER_TAG: ${DOCKER_TAG}"
+echo "IMAGE_NAME: ${IMAGE_NAME}"
+
+IMAGE_NAME1="${DOCKER_REPO}:${SOURCE_COMMIT:0:7}"
+DOCKER_BUID="DOCKER_BUILDKIT=1 docker build . -f $DOCKERFILE_PATH -t $IMAGE_NAME -t $IMAGE_NAME1"
+
+if [[ ! -z "${REPO}" ]]; then
+  echo "-- REPO: ${REPO}"
+  DOCKER_BUID="$DOCKER_BUID --build-arg REPO=$REPO"
+fi
+
+echo "Docker build: ${DOCKER_BUID}"
+eval $DOCKER_BUID
+
+ret_val=$?
+if [ ${ret_val} -eq 0 ]; then
+  echo "Pushing: ${IMAGE_NAME1} for ${SOURCE_COMMIT}"
+  docker push ${IMAGE_NAME1}
+else
+  exit ret_val
+fi
