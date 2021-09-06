@@ -40,12 +40,6 @@ if [ -z "$ADMIN_USER" ]; then
     ADMIN_USER=crushadmin
 fi
 
-if [ -z "$ADMIN_PASSWORD" ] && [ -f admin_user_set ]; then
-    ADMIN_PASSWORD="NOT DISPLAYED!"
-elif [ -z "$ADMIN_PASSWORD" ] && [ ! -f admin_user_set ]; then
-    ADMIN_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
-fi
-
 if [[ ! -d "users/MainUsers/$ADMIN_USER" ]] || [[ ! -f admin_user_set ]] ; then
     log "Creating admin user $ADMIN_USER..."
 
