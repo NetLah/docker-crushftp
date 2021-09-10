@@ -43,13 +43,32 @@ elif [[ "${DOCKER_TAG}" =~ ^[0-9]+(.[0-9]+){0,3}(_[0-9]+)?$ ]] ; then
   DOCKER_BUID="$DOCKER_BUID --build-arg CRUSHFTP_VERSION=$DOCKER_TAG"
 fi
 
+if [[ -n "${REPO2}" ]]; then
+  IMAGE_NAME2="${REPO2}:${DOCKER_TAG}"
+  DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME2"
+fi
+
+if [[ -n "${IMAGE_NAME3}" ]]; then
+  DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME3"
+fi
+
 echo "Docker build=> ${DOCKER_BUID}"
 eval $DOCKER_BUID
 
 ret_val=$?
-if [ ${ret_val} -eq 0 ]; then
+if [[ ${ret_val} -eq 0 ]]; then
   echo "Pushing=> ${IMAGE_NAME1} for ${SOURCE_COMMIT}"
   docker push ${IMAGE_NAME1}
+
+  if [[ -n "${IMAGE_NAME2}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME2}"
+    docker push ${IMAGE_NAME2}
+  fi
+
+  if [[ -n "${IMAGE_NAME3}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME3}"
+    docker push ${IMAGE_NAME3}
+  fi
 else
   exit ret_val
 fi
