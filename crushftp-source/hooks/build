@@ -18,7 +18,7 @@ IMAGE_DEV: ${IMAGE_DEV}
 IMAGE_LATEST: ${IMAGE_LATEST}
 EOF
 
-DOCKER_BUID="DOCKER_BUILDKIT=1 docker build . -f $DOCKERFILE_PATH -t $IMAGE_NAME -t $IMAGE_NAME1 --cache-from=$IMAGE_DEV --cache-from=$IMAGE_LATEST"
+DOCKER_BUID="DOCKER_BUILDKIT=1 docker build . -f $DOCKERFILE_PATH -t $IMAGE_NAME -t $IMAGE_NAME1 --cache-from=$IMAGE_NAME1 --cache-from=$IMAGE_DEV --cache-from=$IMAGE_LATEST"
 
 if [[ -n "${REPO}" ]]; then
   echo "-- REPO: ${REPO}"
@@ -50,6 +50,7 @@ if [[ "${DOCKER_TAG}" =~ ^[0-9]+(.[0-9]+){0,3}(_[0-9]+)?$ ]] ; then
   fi
   
   if [[ -n "${IMAGE_NAME3}" ]]; then
+    USED_IMAGE_NAME3=1
     DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME3"
   fi
 fi
@@ -67,7 +68,7 @@ if [[ ${ret_val} -eq 0 ]]; then
     docker push ${IMAGE_NAME2}
   fi
 
-  if [[ -n "${IMAGE_NAME3}" ]]; then
+  if [[ -n "${USED_IMAGE_NAME3}" ]]; then
     echo "Pushing=> ${IMAGE_NAME3}"
     docker push ${IMAGE_NAME3}
   fi
