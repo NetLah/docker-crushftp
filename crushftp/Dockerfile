@@ -1,6 +1,6 @@
 # alpine:3.13
 ARG REPO=microblink/java:17
-ARG CRUSHFTP_VERSION=10.0.0_45
+ARG CRUSHFTP_VERSION=10.1.0_62
 ARG SOURCE=netlah/crushftp-source:$CRUSHFTP_VERSION
 FROM $REPO AS base
 
@@ -11,7 +11,7 @@ ARG STARTUP=startup.sh
 ADD $STARTUP /src/var/opt/startup.sh
 WORKDIR /src/tmp
 COPY --from=src src/crushftp.zip .
-ARG CRUSHFTP_VERSION=10.0.0_45
+ARG CRUSHFTP_VERSION=10.1.0_62
 RUN date '+%F %T %Z'>>__builddate.txt \
   && echo "CrushFTP Version = $CRUSHFTP_VERSION">>__version.txt \
   && echo "Build Date Time  = `cat __builddate.txt`">>__version.txt \
@@ -28,7 +28,7 @@ WORKDIR /var/opt
 ENTRYPOINT [ "/bin/bash", "startup.sh" ]
 CMD ["-c"]
 
-ARG CRUSHFTP_VERSION=10.0.0_45
+ARG CRUSHFTP_VERSION=10.1.0_62
 ENV ADMIN_USER=crushadmin \
   ADMIN_PASSWORD= \
   WEB_PROTOCOL=http \
