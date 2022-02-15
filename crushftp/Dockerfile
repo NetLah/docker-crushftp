@@ -9,6 +9,7 @@ FROM $SOURCE AS src
 FROM base as build
 ARG STARTUP=startup.sh
 ADD $STARTUP /src/var/opt/startup.sh
+ADD service.sh /src/var/opt/service.sh
 WORKDIR /src/tmp
 COPY --from=src src/crushftp.zip .
 ARG CRUSHFTP_VERSION=10.1.0_62
@@ -25,6 +26,7 @@ RUN apk upgrade --no-cache \
 FROM deps as final
 COPY --from=build /src /
 WORKDIR /var/opt
+RUN ln -s /var/opt/service.sh /usr/sbin/service
 ENTRYPOINT [ "/bin/bash", "startup.sh" ]
 CMD ["-c"]
 

@@ -21,6 +21,12 @@ log_n() {
     echo -n "$(date '+%FT%T%z') $@"
 }
 
+launch_CrushFTP() {
+    log_n "Starting CrushFTP... "
+    java -Xmx512m -jar $CRUSH_DIR/CrushFTP.jar -d & >/dev/null 2>&1
+    echo OK
+}
+
 log "Initializing..."
 
 if [[ ! -d $CRUSH_DIR ]] ; then
@@ -54,9 +60,7 @@ else
     ADMIN_PASSWORD="****************"
 fi
 
-log_n "Starting CrushFTP... "
-java -Xmx512m -jar $CRUSH_DIR/CrushFTP.jar -d & >/dev/null 2>&1
-echo OK
+launch_CrushFTP
 
 log "Waiting server starting..."
 
@@ -119,9 +123,7 @@ do
         get_pid        
         if [[ -z "$CRUSH_PID" ]] ; then
             log "Cannot find PID, try to start CrushFTP again"
-            log_n "Try starting CrushFTP... "
-            java -Xmx512m -jar $CRUSH_DIR/CrushFTP.jar -d & >/dev/null 2>&1
-            echo OK
+            launch_CrushFTP
         fi
     fi
 done
