@@ -21,6 +21,12 @@ log_n() {
     echo -n "$(date '+%FT%T%z') $@"
 }
 
+launch_CrushFTP() {
+    log_n "Starting CrushFTP... "
+    java -Xmx512m -jar $CRUSH_DIR/CrushFTP.jar -d & >/dev/null 2>&1
+    echo OK
+}
+
 log "Initializing..."
 
 if [[ ! -d $CRUSH_DIR ]] ; then
@@ -54,9 +60,7 @@ else
     ADMIN_PASSWORD="****************"
 fi
 
-log_n "Starting CrushFTP... "
-java -Xmx512m -jar $CRUSH_DIR/CrushFTP.jar -d & >/dev/null 2>&1
-echo OK
+launch_CrushFTP
 
 log "Waiting server starting..."
 
@@ -72,18 +76,22 @@ echo "# Password:   $ADMIN_PASSWORD"
 echo "########################################"
 
 get_pid() {
+    unset CRUSH_PID
     CRUSH_PID="`ps -a | grep "java" | grep "$CRUSH_DIR/CrushFTP.jar" | awk '{print $1}'`"
 }
+
+unset SIGTERM_HANDLING
 
 #get_pid
 #log PID $CRUSH_PID has been started!
 
 # SIGTERM-handler
 term_handler() {
+    SIGTERM_HANDLING=1
     log "Stopping..."
     get_pid
     #echo "CRUSH_PID:  $CRUSH_PID"
-    if [[ -z "$CRUSH_PID" ]]; then    
+    if [[ -z "$CRUSH_PID" ]] ; then    
         log Cannot find PID
         exit 1
     fi
@@ -91,7 +99,7 @@ term_handler() {
     log_n "Shutting down CrushFTP... "
     kill $CRUSH_PID
     ret_val=$?
-    if [ ${ret_val} -ne 0 ]; then
+    if [ ${ret_val} -ne 0 ] ; then
         echo FAIL
         log "Could not kill PID"
         exit 1
@@ -106,6 +114,16 @@ trap 'term_handler' SIGTERM
 
 while true
 do
-    sleep 60m &
+    sleep 30s &
     wait $!
+    
+    if [[ -z "$SIGTERM_HANDLING" ]] ; then
+        #log "idle..."
+
+        get_pid        
+        if [[ -z "$CRUSH_PID" ]] ; then
+            log "Cannot find PID, try to start CrushFTP again"
+            launch_CrushFTP
+        fi
+    fi
 done
