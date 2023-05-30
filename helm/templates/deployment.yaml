@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.clustername | lower }}
+  labels:
+    {{- include "crushftp.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "crushftp.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "crushftp.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "crushftp.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: CRUSH_ADMIN_USER
+              value: {{ .Values.admin.username | quote }}
+            - name: CRUSH_ADMIN_PASSWORD
+              value: {{ .Values.admin.password | quote }}
+            - name: CRUSH_ADMIN_PROTOCOL
+              value: {{ .Values.admin.protocol | quote }}
+            - name: CRUSH_ADMIN_PORT
+              value: {{ .Values.admin.port | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.admin.port }}
+              protocol: TCP
+            - name: http-alt
+              containerPort: 9090
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+            - name: sftp
+              containerPort: 2222
+              protocol: TCP
+            {{- if .Values.features.enableFtp }}
+            - name: ftp
+              containerPort: 21
+              protocol: TCP
+              {{- range (untilStep 0 101 1) }}
+            - name: 'ftp-pas-{{ . }}'
+              containerPort: {{ add 2000 . }}
+              protocol: TCP
+              {{- end }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            timeoutSeconds: 10
+            failureThreshold: 3
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            failureThreshold: 24
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            timeoutSeconds: 10
+            failureThreshold: 3
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /var/opt/crushftp
+            {{- range .Values.volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+      volumes:
+        - name: config-volume
+          persistentVolumeClaim:
+            claimName: {{ include "crushftp.fullname" . }}
+        {{- range .Values.volumes }}
+        - name: {{ .name }}
+          csi:
+            driver: file.csi.azure.com
+            readOnly: false
+            volumeAttributes:
+              secretName: {{ $.Values.clustername }}-azurefiles
+              shareName: share
+        {{- end }}
+      nodeSelector:
+        kubernetes.io/os: linux
+      {{- if .Values.nodeSelector }}
+        environment: {{ .Values.nodeSelector }}
+      tolerations:
+        - key: environment
+          operator: Equal
+          value: {{ .Values.nodeSelector }}
+          effect: NoExecute
+      {{- end }}
