@@ -16,18 +16,22 @@ foreach ($dockerRepos in $dockerRepository) {
 $params = @('build', '.')
 
 if ($baseImageRepos) {
+    Write-Host "REPO: $baseImageRepos"
     $params += @('--build-arg', "REPO=$baseImageRepos")
 }
 
 if ($sourceMethod) {
+    Write-Host "SOURCE_METHOD: $sourceMethod"
     $params += @('--build-arg', "SOURCE_METHOD=$sourceMethod")
 }
 
 if ($sourceZip) {
+    Write-Host "SOURCE_ZIP: $sourceZip"
     $params += @('--build-arg', "SOURCE_ZIP=$sourceZip")
 }
 
 if ($crushFtpVersion) {
+    Write-Host "CRUSHFTP_VERSION: $crushFtpVersion"
     $params += @('--build-arg', "CRUSHFTP_VERSION=$crushFtpVersion")
 }
 

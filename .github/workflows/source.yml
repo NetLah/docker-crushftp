@@ -45,4 +45,4 @@ jobs:
             }
           }
           $repos += @('${{ secrets.DOCKER_HUB_SOURCE_REPOS }}')
-          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion -imageTag $imageTag
+          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion -imageTag $imageTag -Verbose
