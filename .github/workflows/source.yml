@@ -26,8 +26,8 @@ jobs:
         if: ${{ success() && github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+          password: '${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}'
 
       - name: Build and push
         if: ${{ success() && env.SKIP_DOCKER != 'true' && github.event_name != 'pull_request' }}
@@ -35,7 +35,7 @@ jobs:
         working-directory: ./crushftp-source
         run: |
           $pattern = '^source-(?<version>\d+\.\d+(\.\d+)?(_.+)?)$'
-          $crushFtpVersion = ${{ env.CRUSHFTP_VERSION }}
+          $crushFtpVersion = '${{ env.CRUSHFTP_VERSION }}'
           $imageTag = '${{ github.ref_name }}'.Replace('/','-')
           if ('${{ env.IS_TAG }}' -eq $true) {
             $repos += @('${{ vars.DOCKER_HUB_NETLAH_SOURCE_REPOS }}')
