@@ -12,6 +12,7 @@ jobs:
     name: crushftp-source
     runs-on: ubuntu-latest
     env:
+      CRUSHFTP_VERSION: '10.5.4'
       IS_TAG: ${{ startsWith(github.ref, 'refs/tags/') }}
       SKIP_DOCKER: false
     steps:
@@ -33,6 +34,13 @@ jobs:
         shell: pwsh
         working-directory: ./crushftp-source
         run: |
-          if ('${{ env.IS_TAG }}' -eq $true) { $repos += @('${{ vars.DOCKER_HUB_NETLAH_SOURCE_REPOS }}') }
+          $pattern = '^source-(?<version>\d+\.\d+(\.\d+)?(_.+)?)$'
+          $crushFtpVersion = ${{ env.CRUSHFTP_VERSION }}
+          if ('${{ env.IS_TAG }}' -eq $true) {
+            $repos += @('${{ vars.DOCKER_HUB_NETLAH_SOURCE_REPOS }}')
+            if ('${{ github.ref_name }}' -match $pattern) {
+              $crushFtpVersion = '${{ github.ref_name }}' -replace $pattern,'${version}'
+            }
+          }
           $repos += @('${{ secrets.DOCKER_HUB_SOURCE_REPOS }}')
-          ./docker-build.ps1 -dockerRepository $repos
+          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion

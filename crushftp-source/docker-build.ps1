@@ -1,6 +1,66 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)] [string[]] $dockerRepository
+    [Parameter(Mandatory = $true)] [string] $imageTag = 'dev',
+    [Parameter(Mandatory = $false)] [string[]] $dockerRepository,
+    [Parameter(Mandatory = $false)] [string] $baseImageRepos,
+    [Parameter(Mandatory = $false)] [string] $sourceMethod,
+    [Parameter(Mandatory = $false)] [string] $sourceZip,
+    [Parameter(Mandatory = $false)] [string] $crushFtpVersion
 )
 
-Write-Host "Repos: $dockerRepository"
+$dockerImages = @()
+foreach ($dockerRepos in $dockerRepository) {
+    $dockerImages += @("$($dockerRepos):$($imageTag)")
+}
+
+$params = @('build', '.')
+
+if ($baseImageRepos) {
+    $params += @('--build-arg', "REPO=$baseImageRepos")
+}
+
+if ($sourceMethod) {
+    $params += @('--build-arg', "SOURCE_METHOD=$sourceMethod")
+}
+
+if ($sourceZip) {
+    $params += @('--build-arg', "SOURCE_ZIP=$sourceZip")
+}
+
+if ($crushFtpVersion) {
+    $params += @('--build-arg', "CRUSHFTP_VERSION=$crushFtpVersion")
+}
+
+$params += @('--pull', '--progress=plain')
+
+Write-Output "Docker images: $dockerImages"
+[bool]$isGitHubAction = "$Env:GITHUB_ACTIONS" -eq $true
+if (!$isGitHubAction) {
+    foreach ($dockerImage in $dockerImages) {
+        $params += @("--cache-from=$($dockerImage)")
+    }
+}
+
+foreach ($dockerImage in $dockerImages) {
+    $params += @("--tag=$($dockerImage)")
+}
+
+Write-Verbose "Execute: docker $params"
+docker @params
+if (!$?) {
+    $saveLASTEXITCODE = $LASTEXITCODE
+    Write-Error "docker build failed (exit=$saveLASTEXITCODE)"
+    exit $saveLASTEXITCODE
+}
+
+if (!$WhatIf -And $dockerImages) {
+    Write-Host "Pushing docker images"
+    foreach ($dockerImage in $dockerImages) {
+        docker push $dockerImage
+        if (!$?) {
+            $saveLASTEXITCODE = $LASTEXITCODE
+            Write-Error "docker push failed (exit=$saveLASTEXITCODE)"
+            exit $saveLASTEXITCODE
+        }
+    }
+}
