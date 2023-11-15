@@ -5,7 +5,8 @@ param (
     [Parameter(Mandatory = $false)] [string] $baseImageRepos,
     [Parameter(Mandatory = $false)] [string] $sourceMethod,
     [Parameter(Mandatory = $false)] [string] $sourceZip,
-    [Parameter(Mandatory = $false)] [string] $crushFtpVersion
+    [Parameter(Mandatory = $false)] [string] $crushFtpVersion,
+    [Parameter(Mandatory = $false)] [switch] $WhatIf
 )
 
 $dockerImages = @()
@@ -57,7 +58,10 @@ if (!$?) {
     exit $saveLASTEXITCODE
 }
 
-if (!$WhatIf -And $dockerImages) {
+if ($WhatIf) {
+    Write-Host "Skipped pushing docker image"
+}
+elseif ($dockerImages) {
     Write-Host "Pushing docker images"
     foreach ($dockerImage in $dockerImages) {
         docker push $dockerImage

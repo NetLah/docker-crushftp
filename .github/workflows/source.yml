@@ -37,6 +37,7 @@ jobs:
           $pattern = '^source-(?<version>\d+\.\d+(\.\d+)?(_.+)?)$'
           $crushFtpVersion = '${{ env.CRUSHFTP_VERSION }}'
           $imageTag = '${{ github.ref_name }}'.Replace('/','-')
+          $whatIf = '${{ github.event_name == 'pull_request' }}' -eq $true
           if ('${{ env.IS_TAG }}' -eq $true) {
             $repos += @('${{ vars.DOCKER_HUB_NETLAH_SOURCE_REPOS }}')
             if ('${{ github.ref_name }}' -match $pattern) {
@@ -45,4 +46,4 @@ jobs:
             }
           }
           $repos += @('${{ secrets.DOCKER_HUB_SOURCE_REPOS }}')
-          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion -imageTag $imageTag -Verbose
+          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion -imageTag $imageTag -WhatIf:$whatIf -Verbose
