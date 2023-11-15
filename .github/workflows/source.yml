@@ -36,11 +36,13 @@ jobs:
         run: |
           $pattern = '^source-(?<version>\d+\.\d+(\.\d+)?(_.+)?)$'
           $crushFtpVersion = ${{ env.CRUSHFTP_VERSION }}
+          $imageTag = ${{ github.ref_name }}.Replace('/','-')
           if ('${{ env.IS_TAG }}' -eq $true) {
             $repos += @('${{ vars.DOCKER_HUB_NETLAH_SOURCE_REPOS }}')
             if ('${{ github.ref_name }}' -match $pattern) {
               $crushFtpVersion = '${{ github.ref_name }}' -replace $pattern,'${version}'
+              $imageTag = $crushFtpVersion
             }
           }
           $repos += @('${{ secrets.DOCKER_HUB_SOURCE_REPOS }}')
-          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion
+          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion -imageTag $imageTag
