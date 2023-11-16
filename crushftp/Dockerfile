@@ -27,7 +27,7 @@ FROM deps as final
 COPY --from=build /src /
 WORKDIR /var/opt
 RUN ln -s /var/opt/service.sh /usr/sbin/service
-ENTRYPOINT [ "/bin/bash", "-c", "startup.sh" ]
+ENTRYPOINT [ "/bin/bash", "-c", "/var/opt/startup.sh" ]
 
 ARG CRUSHFTP_VERSION=10.5.1
 ENV ADMIN_USER=crushadmin \
