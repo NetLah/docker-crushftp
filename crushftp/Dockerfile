@@ -26,7 +26,8 @@ RUN apk upgrade --no-cache \
 FROM deps as final
 COPY --from=build /src /
 WORKDIR /var/opt
-RUN ln -s /var/opt/service.sh /usr/sbin/service
+RUN ln -s /var/opt/service.sh /usr/sbin/service \
+  && chmod +x service.sh startup.sh
 ENTRYPOINT [ "/bin/bash", "-c", "/var/opt/startup.sh" ]
 
 ARG CRUSHFTP_VERSION=10.5.1
