@@ -4,13 +4,21 @@ param (
     [Parameter(Mandatory = $false)] [string[]] $dockerRepository,
     [Parameter(Mandatory = $false)] [string] $baseImageRepos,
     [Parameter(Mandatory = $false)] [string] $crushFtpVersion,
-    [Parameter(Mandatory = $false)] [string] $source,
+    [Parameter(Mandatory = $false)] [string] $sourceImage,
+    [Parameter(Mandatory = $false)] [switch] $Latest,
     [Parameter(Mandatory = $false)] [switch] $WhatIf
 )
+
+if ($Latest) {
+    Write-Host "Include latest images"
+}
 
 $dockerImages = @()
 foreach ($dockerRepos in $dockerRepository) {
     $dockerImages += @("$($dockerRepos):$($imageTag)")
+    if ($Latest) {
+        $dockerImages += @("$($dockerRepos)")   # latest
+    }
 }
 
 $params = @('build', '.')
@@ -25,9 +33,9 @@ if ($crushFtpVersion) {
     $params += @('--build-arg', "CRUSHFTP_VERSION=$crushFtpVersion")
 }
 
-if ($source) {
-    Write-Verbose "SOURCE: $source"
-    $params += @('--build-arg', "SOURCE=$source")
+if ($sourceImage) {
+    Write-Verbose "SOURCE: $sourceImage"
+    $params += @('--build-arg', "SOURCE=$sourceImage")
 }
 
 $params += @('--pull', '--progress=plain')
