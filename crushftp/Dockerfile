@@ -39,7 +39,7 @@ ENV ADMIN_USER=crushadmin \
   CRUSHFTP_VERSION=$CRUSHFTP_VERSION
 
 HEALTHCHECK --interval=1m --timeout=3s \
-  CMD curl -f ${WEB_PROTOCOL}://localhost:${WEB_PORT}/favicon.ico -H 'Connection: close' || exit 1
+  CMD curl --silent --fail ${WEB_PROTOCOL}://localhost:${WEB_PORT}/favicon.ico -H 'Connection: close' > /dev/null || exit 1
 
 VOLUME [ "/var/opt/crushftp" ]
 # remove range of Passive FTP 20000-20100 from declare
