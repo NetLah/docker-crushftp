@@ -86,6 +86,11 @@ unset SIGTERM_HANDLING
 #log PID $CRUSH_PID has been started!
 
 # SIGTERM-handler
+ctrl_c() {
+    echo " handling INT..."
+    term_handler
+}
+
 term_handler() {
     SIGTERM_HANDLING=1
     log "Stopping..."
@@ -111,6 +116,7 @@ term_handler() {
 }
 
 trap 'term_handler' SIGTERM
+trap 'ctrl_c' INT
 
 while true
 do
