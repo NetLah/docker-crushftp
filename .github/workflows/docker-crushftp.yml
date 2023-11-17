@@ -46,7 +46,8 @@ jobs:
             Write-Host "Source version from repos vars $crushFtpVersion"
           }
           $imageTag = '${{ github.ref_name }}'.Replace('/','-')
-          $whatIf = '${{ github.event_name == 'pull_request' }}' -eq $true
+          #$whatIf = '${{ github.event_name == 'pull_request' }}' -eq $true
+          $whatIf = $false
           if ('${{ env.IS_TAG }}' -eq $true) {
             $repos += @('${{ vars.DOCKER_HUB_NETLAH_REPOS }}')
             if ('${{ github.ref_name }}' -match $pattern) {
