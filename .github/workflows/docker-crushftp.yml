@@ -53,7 +53,7 @@ jobs:
             if ('${{ github.ref_name }}' -match $pattern) {
               $crushFtpVersionTag = '${{ github.ref_name }}' -replace $pattern,'${version}'
               $imageTag = $crushFtpVersionTag
-              $latest = true
+              $latest = $true
               if (!$varsCrushFtpVersionOverrideTag) {
                 $crushFtpVersion = $crushFtpVersionTag
                 Write-Host "Source version from tag $crushFtpVersion"
