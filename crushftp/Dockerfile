@@ -1,6 +1,6 @@
 # alpine:3.13
 ARG REPO=microblink/java:17
-ARG CRUSHFTP_VERSION=10.1.0_62
+ARG CRUSHFTP_VERSION=10.5.1
 ARG SOURCE=netlah/crushftp-source:$CRUSHFTP_VERSION
 FROM $REPO AS base
 
@@ -12,7 +12,7 @@ ADD $STARTUP /src/var/opt/startup.sh
 ADD service.sh /src/var/opt/service.sh
 WORKDIR /src/tmp
 COPY --from=src src/crushftp.zip .
-ARG CRUSHFTP_VERSION=10.1.0_62
+ARG CRUSHFTP_VERSION=10.5.1
 RUN date '+%F %T %Z'>>__builddate.txt \
   && echo "CrushFTP Version = $CRUSHFTP_VERSION">>__version.txt \
   && echo "Build Date Time  = `cat __builddate.txt`">>__version.txt \
@@ -26,11 +26,11 @@ RUN apk upgrade --no-cache \
 FROM deps as final
 COPY --from=build /src /
 WORKDIR /var/opt
-RUN ln -s /var/opt/service.sh /usr/sbin/service
-ENTRYPOINT [ "/bin/bash", "startup.sh" ]
-CMD ["-c"]
+RUN ln -s /var/opt/service.sh /usr/sbin/service \
+  && chmod +x service.sh startup.sh
+ENTRYPOINT [ "/bin/bash", "-c", "/var/opt/startup.sh" ]
 
-ARG CRUSHFTP_VERSION=10.1.0_62
+ARG CRUSHFTP_VERSION=10.5.1
 ENV ADMIN_USER=crushadmin \
   ADMIN_PASSWORD= \
   WEB_PROTOCOL=http \
@@ -39,7 +39,7 @@ ENV ADMIN_USER=crushadmin \
   CRUSHFTP_VERSION=$CRUSHFTP_VERSION
 
 HEALTHCHECK --interval=1m --timeout=3s \
-  CMD curl -f ${WEB_PROTOCOL}://localhost:${WEB_PORT}/favicon.ico -H 'Connection: close' || exit 1
+  CMD curl --silent --fail ${WEB_PROTOCOL}://localhost:${WEB_PORT}/favicon.ico -H 'Connection: close' > /dev/null || exit 1
 
 VOLUME [ "/var/opt/crushftp" ]
 # remove range of Passive FTP 20000-20100 from declare

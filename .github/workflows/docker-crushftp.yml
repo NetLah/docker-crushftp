@@ -1,0 +1,66 @@
+name: CrushFTP Docker
+
+on:
+  push:
+    branches: ["main", "dev-*", "dev/*"]
+    tags: ["*.*.*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+    name: docker-crushftp
+    runs-on: ubuntu-latest
+    env:
+      CRUSHFTP_VERSION: "10.5.4"
+      IS_TAG: ${{ startsWith(github.ref, 'refs/tags/') }}
+      SKIP_DOCKER: false
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        if: ${{ success() && env.SKIP_DOCKER != 'true' }}
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        if: ${{ success() && env.SKIP_DOCKER != 'true' }}
+        uses: docker/login-action@v2
+        with:
+          username: "${{ secrets.DOCKER_HUB_USERNAME }}"
+          password: "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+
+      - name: Build and push
+        if: ${{ success() && env.SKIP_DOCKER != 'true' }}
+        shell: pwsh
+        working-directory: ./crushftp
+        run: |
+          $latest = $false
+          $pattern = '^(?<version>\d+\.\d+(\.\d+)?(_.+)?)$'
+          $crushFtpVersion = '${{ env.CRUSHFTP_VERSION }}'
+          $varsCrushFtpVersion = '${{ vars.CRUSHFTP_VERSION }}'
+          if ($varsCrushFtpVersion) {
+            $varsCrushFtpVersionOverrideTag = '${{ vars.CRUSHFTP_VERSION_OVERRIDE_TAG }}' -eq $true
+            $crushFtpVersion = $varsCrushFtpVersion
+            Write-Host "Source version from repos vars $crushFtpVersion"
+          }
+          $imageTag = '${{ github.ref_name }}'.Replace('/','-')
+          #$whatIf = '${{ github.event_name == 'pull_request' }}' -eq $true
+          $whatIf = $false
+          if ('${{ env.IS_TAG }}' -eq $true) {
+            $repos += @('${{ vars.DOCKER_HUB_NETLAH_REPOS }}')
+            if ('${{ github.ref_name }}' -match $pattern) {
+              $crushFtpVersionTag = '${{ github.ref_name }}' -replace $pattern,'${version}'
+              $imageTag = $crushFtpVersionTag
+              $latest = true
+              if (!$varsCrushFtpVersionOverrideTag) {
+                $crushFtpVersion = $crushFtpVersionTag
+                Write-Host "Source version from tag $crushFtpVersion"
+              } else {
+                Write-Host "Source override tag $crushFtpVersion ($crushFtpVersionTag)"
+              }
+            }
+          }
+          $repos += @('${{ secrets.DOCKER_HUB_REPOS }}')
+          ./docker-build.ps1 -dockerRepository $repos -crushFtpVersion $crushFtpVersion -imageTag $imageTag -WhatIf:$whatIf -Latest:$latest -Verbose
