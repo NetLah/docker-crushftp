@@ -1,0 +1,4 @@
+{{ .Chart.Description }}
+Crush FTP is now accessible at https://{{ .Values.shared.hosts.crushFtp.prefix }}{{ .Values.shared.hosts.crushFtp.root }}
+View the container logs for temporary password.
+This will show as deployment and pod {{ template "crushftp.fullname" . }} in namespace {{ .Release.Namespace }}.

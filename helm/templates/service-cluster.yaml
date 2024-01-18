@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "crushftp.fullname" . }}-cluster
+  labels:
+    {{- include "crushftp.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: https
+      port: 443
+      targetPort: 443
+      protocol: TCP
+  selector:
+    {{- include "crushftp.selectorLabels" . | nindent 4 }}

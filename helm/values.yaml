@@ -1,0 +1,108 @@
+# Default values for crushftp.
+clustername: ftp
+
+# Which nodepool should CrushFTP deploy to?
+nodeSelector: ftp
+
+# How many instances of CrushFTP should be running?
+replicaCount: 1
+
+# Which docker image should be used?
+image:
+  repository: netlah/crushftp
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "10.4.0"
+
+# Access Information
+admin:
+  username: crushadmin
+  # Leave password blank and check the container log for the temp password.
+  password: ""
+  protocol: http
+  port: 8080
+tls:
+  secretName: crushftp-tls
+
+# Size of the config volume for CrushFTP to use.
+configVolume:
+  size: 8Gi
+
+# Set IP for the LB or enable FTP?
+loadBalancerIp:
+features:
+  enableFtp: false
+
+# Configure Azure File Share Connectivity.  AZURE FILE SHARE MUST ALREADY EXIST.
+# Enter the name of storage account in the account field, and supply corresponding access key via --set azure.client.default.key=foo
+azure:
+  client:
+    default:
+      account: storageaccountname
+
+volumes:
+  # Volume to mount for Azure Files FTP root folder.
+  - name: ftproot
+    mountPath: /ftproot
+
+# URL Configuration
+shared:
+  hosts:
+    crushFtp:
+      root: dev.company.com
+      prefix: ftptest.
+  ingress:
+    clusterIssuer:
+  storageClassName: default
+
+imagePullSecrets:
+  - name: ftp-azurefiles
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    kubernetes.io/tls-acme: "false"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    #   cpu: 100m
+    memory: 1G
+  requests:
+    #   cpu: 100m
+    memory: 1G
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

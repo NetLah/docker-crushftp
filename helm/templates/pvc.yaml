@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "crushftp.fullname" . }}
+  labels:
+    {{- include "crushftp.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.shared.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.configVolume.size }}
