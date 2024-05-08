@@ -4,7 +4,7 @@ This intermediate docker image contains crushftp.zip for next docker build image
 
 ## Docker Specifications
 
-- Base: Alpine 3.13 Linux
+- Base: Alpine 3.19 Linux
 - CrushFTP 10 (v10.7.1)
 - Repository: [hub.docker.com/r/netlah/crushftp](hub.docker.com/r/netlah/crushftp)
 - Docker: [hub.docker.com/r/netlah/crushftp-source](hub.docker.com/r/netlah/crushftp-source)

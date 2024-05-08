@@ -47,6 +47,6 @@ EXPOSE 21 2222 443 8080 9090
 LABEL org.opencontainers.image.authors="https://github.com/NetLah" \
   org.opencontainers.image.url="https://hub.docker.com/r/netlah/crushftp" \
   org.opencontainers.image.source="https://github.com/NetLah/docker-crushftp" \
-  org.opencontainers.image.description="CrushFTP 10 server on Alpine Linux 3.13 and OpenJDK 17." \
+  org.opencontainers.image.description="CrushFTP 10 server on Alpine Linux 3.19 and OpenJDK 17." \
   org.opencontainers.image.version="$CRUSHFTP_VERSION"\
   version="$CRUSHFTP_VERSION"
