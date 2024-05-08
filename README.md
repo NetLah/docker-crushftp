@@ -54,3 +54,5 @@ docker logs <container_id/container_name>
 - Visit the [CrushFTP 10 Wiki](https://www.crushftp.com/crush10wiki/)
 - Docker sample [CrushFTP 10 Docker sample](https://www.crushftp.com/crush10wiki/Wiki.jsp?page=Docker)
 - A [CrushFTP 10 Dockerization](https://github.com/MarkusMcNugen/docker-CrushFTP)
+- Prebuilt OpenJDK by [Adoptium](https://adoptium.net/), project [Eclipse Temurin](https://adoptium.net/temurin/)
+- Java docker [eclipse-temurin](https://hub.docker.com/_/eclipse-temurin)
