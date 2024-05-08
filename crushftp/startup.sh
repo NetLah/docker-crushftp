@@ -5,7 +5,8 @@ cat >/etc/motd <<EOL
  | (__| '_| || (_-< ' \| _|  | | |  _/ | | () |
   \___|_|  \_,_/__/_||_|_|   |_| |_|   |_|\__/ 
 
-CrushFTP 10, Alpine 3.13, OpenJDK 17
+CrushFTP 10, $(source /etc/os-release;echo $PRETTY_NAME)
+$(java -version 2>&1)
 Build Time: `cat /tmp/__builddate.txt`
 Start Time: `date '+%F %T %Z'`
 EOL
