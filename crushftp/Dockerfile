@@ -1,5 +1,5 @@
-# alpine:3.13
-ARG REPO=microblink/java:17
+# alpine:3.19.1
+ARG REPO=eclipse-temurin:17-jre-alpine
 ARG CRUSHFTP_VERSION=10.7.1_40
 ARG SOURCE=netlah/crushftp-source:$CRUSHFTP_VERSION
 FROM $REPO AS base
