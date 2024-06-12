@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "crushftp.fullname" . }}
+  labels:
+    {{- include "crushftp.labels" . | nindent 4 }}
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: http-alt
+      port: 9090
+      targetPort: 9090
+      protocol: TCP
+    - name: sftp
+      port: 2222
+      targetPort: 2222
+      protocol: TCP
+    {{- if .Values.features.enableFtp }}
+    - name: ftp
+      port: 21
+      targetPort: 21
+      protocol: TCP
+      {{- range (untilStep 0 101 1) }}
+    - name: 'ftp-pas-{{ . }}'
+      port: {{ add 2000 . }}
+      targetPort: {{ add 2000 . }}
+      protocol: TCP
+      {{- end }}
+    {{- end }}
+  selector:
+    {{- include "crushftp.selectorLabels" . | nindent 4 }}
+  externalTrafficPolicy: Local
+  loadBalancerIP: {{ .Values.loadBalancerIp }}
