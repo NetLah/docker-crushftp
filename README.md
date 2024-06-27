@@ -5,7 +5,7 @@ CrushFTP 10 Server provides FTP, Implicit FTPS, SFTP, HTTP, or HTTPS
 ## Docker Specifications
 
 - Base: Alpine 3.19 Linux, OpenJDK 17, `eclipse-temurin:17-jre-alpine`
-- CrushFTP 10 (v10.7.1) (required commercial license [pricing](https://www.crushftp.com/pricing.html))
+- CrushFTP 10 (v10.8.0) (required commercial license [pricing](https://www.crushftp.com/pricing.html))
 - Dockerfile: https://github.com/NetLah/docker-crushftp
 
 This container [hub.docker.com/r/netlah/crushftp](https://hub.docker.com/r/netlah/crushftp) is distributed under the [MIT Licence](LICENSE).

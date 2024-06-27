@@ -1,5 +1,5 @@
 # alpine:3.19.1
-# buildargs: REPO=alpine:3.19.1 CRUSHFTP_VERSION=10.7.1_40 SOURCE_METHOD=wget or add SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
+# buildargs: REPO=alpine:3.19.1 CRUSHFTP_VERSION=10.8.0_4 SOURCE_METHOD=wget or add SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
 ARG REPO=alpine:3.19.1
 ARG SOURCE_METHOD=wget
 
@@ -33,7 +33,7 @@ FROM base as final
 WORKDIR /src
 COPY --from=zip /src .
 
-ARG CRUSHFTP_VERSION=10.7.1_40
+ARG CRUSHFTP_VERSION=10.8.0_4
 ENV CRUSHFTP_VERSION=$CRUSHFTP_VERSION
 LABEL org.opencontainers.image.authors="https://github.com/NetLah"\
   org.opencontainers.image.url="https://hub.docker.com/r/netlah/crushftp-source"\
