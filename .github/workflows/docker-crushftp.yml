@@ -2,12 +2,12 @@ name: CrushFTP Docker
 
 on:
   push:
-    branches: ["main", "dev-*", "dev/*"]
+    branches: ["main", "dev-*", "dev/*", "release/*"]
     tags:
       - "*.*.*"
       - "!source*"
   pull_request:
-    branches: [main]
+    branches: ["main", "release/*"]
 
 jobs:
   build:
