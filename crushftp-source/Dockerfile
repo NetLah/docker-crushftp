@@ -28,7 +28,7 @@ ARG CRUSHFTP_VER=CrushFTP11
 RUN unzip -oq ${CRUSHFTP_VER}.zip
 # create folder /src if not exist
 WORKDIR /src
-RUN cd /tmp/CRUSHFTP_VER \
+RUN cd /tmp/$CRUSHFTP_VER \
   && zip -qr9 /src/crushftp.zip * \
   && date '+%F %T %z'>/src/__builddate.txt
 
