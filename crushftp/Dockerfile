@@ -1,6 +1,6 @@
 # alpine:3.19.1
 ARG REPO=eclipse-temurin:17-jre-alpine
-ARG CRUSHFTP_VERSION=10.8.0_4
+ARG CRUSHFTP_VERSION=11.2.0_5
 ARG SOURCE=netlah/crushftp-source:$CRUSHFTP_VERSION
 FROM $REPO AS base
 
@@ -12,7 +12,7 @@ ADD $STARTUP /src/var/opt/startup.sh
 ADD service.sh /src/var/opt/service.sh
 WORKDIR /src/tmp
 COPY --from=src src/crushftp.zip .
-ARG CRUSHFTP_VERSION=10.8.0_4
+ARG CRUSHFTP_VERSION=11.2.0_5
 RUN date '+%F %T %Z'>>__builddate.txt \
   && echo "CrushFTP Version = $CRUSHFTP_VERSION">>__version.txt \
   && echo "Build Date Time  = `cat __builddate.txt`">>__version.txt \
@@ -30,7 +30,7 @@ RUN ln -s /var/opt/service.sh /usr/sbin/service \
   && chmod +x service.sh startup.sh
 ENTRYPOINT [ "/bin/bash", "-c", "/var/opt/startup.sh" ]
 
-ARG CRUSHFTP_VERSION=10.8.0_4
+ARG CRUSHFTP_VERSION=11.2.0_5
 ENV ADMIN_USER=crushadmin \
   ADMIN_PASSWORD= \
   WEB_PROTOCOL=http \
@@ -47,6 +47,6 @@ EXPOSE 21 2222 443 8080 9090
 LABEL org.opencontainers.image.authors="https://github.com/NetLah" \
   org.opencontainers.image.url="https://hub.docker.com/r/netlah/crushftp" \
   org.opencontainers.image.source="https://github.com/NetLah/docker-crushftp" \
-  org.opencontainers.image.description="CrushFTP 10 server on Alpine Linux 3.19 and OpenJDK 17." \
+  org.opencontainers.image.description="CrushFTP 11 server on Alpine Linux 3.19 and OpenJDK 17." \
   org.opencontainers.image.version="$CRUSHFTP_VERSION"\
   version="$CRUSHFTP_VERSION"

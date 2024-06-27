@@ -1,5 +1,5 @@
 # alpine:3.19.1
-# buildargs: REPO=alpine:3.19.1 CRUSHFTP_VERSION=10.8.0_4 SOURCE_METHOD=wget or add SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
+# buildargs: REPO=alpine:3.19.1 CRUSHFTP_VERSION=11.2.0_5 SOURCE_METHOD=wget or add SOURCE_ZIP=https://www.crushftp.com/early11/CrushFTP11.zip
 ARG REPO=alpine:3.19.1
 ARG SOURCE_METHOD=wget
 
@@ -11,21 +11,24 @@ RUN apk upgrade --no-cache \
 WORKDIR /tmp
 
 FROM base-source AS source-wget
-# source CrushFTP10.zip without java included
-ARG SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
-RUN wget -q -O CrushFTP10.zip $SOURCE_ZIP
+# source CrushFTP11.zip without java included
+ARG SOURCE_ZIP=https://www.crushftp.com/early11/CrushFTP11.zip
+ARG CRUSHFTP_VER=CrushFTP11
+RUN wget -q -O ${CRUSHFTP_VER}.zip $SOURCE_ZIP
 
 FROM base-source AS source-add
-# source CrushFTP10.zip without java included
-ARG SOURCE_ZIP=https://www.crushftp.com/early10/CrushFTP10.zip
-ADD $SOURCE_ZIP CrushFTP10.zip
+# source CrushFTP11.zip without java included
+ARG SOURCE_ZIP=https://www.crushftp.com/early11/CrushFTP11.zip
+ARG CRUSHFTP_VER=CrushFTP11
+ADD $SOURCE_ZIP ${CRUSHFTP_VER}.zip
 
 FROM source-$SOURCE_METHOD AS zip
-# unzip to destination /tmp/CrushFTP10
-RUN unzip -oq CrushFTP10.zip
+# unzip to destination /tmp/CrushFTP11
+ARG CRUSHFTP_VER=CrushFTP11
+RUN unzip -oq ${CRUSHFTP_VER}.zip
 # create folder /src if not exist
 WORKDIR /src
-RUN cd /tmp/CrushFTP10 \
+RUN cd /tmp/CRUSHFTP_VER \
   && zip -qr9 /src/crushftp.zip * \
   && date '+%F %T %z'>/src/__builddate.txt
 
@@ -33,7 +36,7 @@ FROM base as final
 WORKDIR /src
 COPY --from=zip /src .
 
-ARG CRUSHFTP_VERSION=10.8.0_4
+ARG CRUSHFTP_VERSION=11.2.0_5
 ENV CRUSHFTP_VERSION=$CRUSHFTP_VERSION
 LABEL org.opencontainers.image.authors="https://github.com/NetLah"\
   org.opencontainers.image.url="https://hub.docker.com/r/netlah/crushftp-source"\

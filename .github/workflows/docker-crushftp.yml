@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     env:
-      CRUSHFTP_VERSION: "10.8.0_4"
+      CRUSHFTP_VERSION: "11.2.0_5"
       IS_TAG: ${{ startsWith(github.ref, 'refs/tags/') }}
       IS_DEV: ${{ startsWith(github.ref, 'refs/heads/dev') }}
       SKIP_DOCKER: false

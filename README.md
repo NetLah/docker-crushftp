@@ -1,11 +1,11 @@
-# CrushFTP 10
+# CrushFTP 11
 
-CrushFTP 10 Server provides FTP, Implicit FTPS, SFTP, HTTP, or HTTPS
+CrushFTP 11 Server provides FTP, Implicit FTPS, SFTP, HTTP, or HTTPS
 
 ## Docker Specifications
 
 - Base: Alpine 3.19 Linux, OpenJDK 17, `eclipse-temurin:17-jre-alpine`
-- CrushFTP 10 (v10.8.0) (required commercial license [pricing](https://www.crushftp.com/pricing.html))
+- CrushFTP 11 (v10.8.0) (required commercial license [pricing](https://www.crushftp.com/pricing.html))
 - Dockerfile: https://github.com/NetLah/docker-crushftp
 
 This container [hub.docker.com/r/netlah/crushftp](https://hub.docker.com/r/netlah/crushftp) is distributed under the [MIT Licence](LICENSE).
@@ -51,8 +51,8 @@ docker logs <container_id/container_name>
 
 ## References
 
-- Visit the [CrushFTP 10 Wiki](https://www.crushftp.com/crush10wiki/)
-- Docker sample [CrushFTP 10 Docker sample](https://www.crushftp.com/crush10wiki/Wiki.jsp?page=Docker)
+- Visit the [CrushFTP 11 Wiki](https://www.crushftp.com/crush11wiki/)
+- Docker sample [CrushFTP 11 Docker sample](https://www.crushftp.com/crush11wiki/Wiki.jsp?page=Docker)
 - A [CrushFTP 10 Dockerization](https://github.com/MarkusMcNugen/docker-CrushFTP)
 - Prebuilt OpenJDK by [Adoptium](https://adoptium.net/), project [Eclipse Temurin](https://adoptium.net/temurin/)
 - Java docker [eclipse-temurin](https://hub.docker.com/_/eclipse-temurin)
